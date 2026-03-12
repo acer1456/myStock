@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <title>FinMind API 測試 - 三大法人</title>
+  <style>
+    body { font-family: monospace; background: #0f172a; color: #e2e8f0; padding: 24px; }
+    h2 { color: #3b82f6; margin-bottom: 12px; }
+    button {
+      background: #3b82f6; color: white; border: none;
+      padding: 10px 20px; border-radius: 6px; cursor: pointer;
+      font-size: 14px; margin: 4px;
+    }
+    button:hover { background: #2563eb; }
+    .section { margin-bottom: 32px; }
+    label { color: #94a3b8; font-size: 13px; display: block; margin-bottom: 6px; }
+    input {
+      background: #1e293b; border: 1px solid #334155; color: #e2e8f0;
+      padding: 8px 12px; border-radius: 6px; font-size: 13px;
+      width: 220px; margin-right: 8px;
+    }
+    #log {
+      background: #1e293b; border: 1px solid #334155;
+      border-radius: 8px; padding: 16px;
+      font-size: 13px; line-height: 1.8;
+      white-space: pre-wrap; max-height: 600px; overflow-y: auto;
+    }
+    .ok { color: #10b981; }
+    .err { color: #ef4444; }
+    .info { color: #f59e0b; }
+    .dim { color: #64748b; }
+    table { border-collapse: collapse; width: 100%; font-size: 12px; margin-top: 8px; }
+    th { background: #263350; color: #94a3b8; padding: 8px 12px; text-align: left; }
+    td { padding: 7px 12px; border-bottom: 1px solid #334155; }
+    tr:hover td { background: rgba(255,255,255,0.03); }
+  </style>
+</head>
+<body>
+  <h2>🔬 FinMind API 測試工具 — 三大法人 (TaiwanStockInstitutionalInvestorsBuySell)</h2>
+
+  <div class="section">
+    <label>股票代碼</label>
+    <input id="stockId" value="2330" />
+    <label>開始日期</label>
+    <input id="startDate" value="2025-12-01" />
+    <label>結束日期</label>
+    <input id="endDate" value="2026-03-12" />
+    <br/><br/>
+    <button onclick="testInstitutional()">測試三大法人</button>
+    <button onclick="testPrice()">測試股價</button>
+    <button onclick="testPER()">測試 PER</button>
+    <button onclick="runAll()">全部測試</button>
+    <button onclick="clearLog()">清除</button>
+  </div>
+
+  <div id="result"></div>
+  <div id="log"></div>
+
+  <script>
+    const BASE = 'https://api.finmindtrade.com/api/v4/data';
+
+    function log(msg, cls = '') {
+      const el = document.getElementById('log');
+      const line = document.createElement('div');
+      if (cls) line.className = cls;
+      line.textContent = msg;
+      el.appendChild(line);
+      el.scrollTop = el.scrollHeight;
+    }
+
+    function clearLog() {
+      document.getElementById('log').innerHTML = '';
+      document.getElementById('result').innerHTML = '';
+    }
+
+    async function fetchAPI(dataset, extraParams = {}) {
+      const id = document.getElementById('stockId').value.trim();
+      const start = document.getElementById('startDate').value.trim();
+      const end = document.getElementById('endDate').value.trim();
+
+      const params = new URLSearchParams({
+        dataset,
+        data_id: id,
+        start_date: start,
+        end_date: end,
+        ...extraParams,
+      });
+
+      const url = `${BASE}?${params}`;
+      log(`\n📡 請求: ${url}`, 'info');
+
+      try {
+        const res = await fetch(url);
+        log(`   HTTP 狀態: ${res.status} ${res.statusText}`, res.ok ? 'ok' : 'err');
+
+        const json = await res.json();
+        log(`   API 狀態: ${json.status} | msg: ${json.msg}`, json.status === 200 ? 'ok' : 'err');
+
+        if (json.data) {
+          log(`   ✅ 資料筆數: ${json.data.length}`, 'ok');
+          if (json.data.length > 0) {
+            log(`   第一筆: ${JSON.stringify(json.data[0])}`, 'dim');
+            log(`   最後筆: ${JSON.stringify(json.data[json.data.length-1])}`, 'dim');
+          }
+        } else {
+          log(`   ❌ 無 data 欄位`, 'err');
+        }
+
+        return json;
+      } catch (e) {
+        log(`   ❌ 例外: ${e.message}`, 'err');
+        return null;
+      }
+    }
+
+    async function testInstitutional() {
+      log('═══════════ 三大法人 (TaiwanStockInstitutionalInvestorsBuySell) ═══════════', 'info');
+      const json = await fetchAPI('TaiwanStockInstitutionalInvestorsBuySell');
+      if (json?.data?.length > 0) {
+        renderTable(json.data.slice(0, 20), '三大法人買賣超（前20筆）');
+      }
+    }
+
+    async function testPrice() {
+      log('═══════════ 股價 (TaiwanStockPrice) ═══════════', 'info');
+      const json = await fetchAPI('TaiwanStockPrice');
+      if (json?.data?.length > 0) {
+        renderTable(json.data.slice(0, 5), '股價（前5筆）');
+      }
+    }
+
+    async function testPER() {
+      log('═══════════ PER/PBR (TaiwanStockPER) ═══════════', 'info');
+      await fetchAPI('TaiwanStockPER');
+    }
+
+    async function runAll() {
+      clearLog();
+      log('🚀 開始全部測試...', 'info');
+      await testPrice();
+      await testPER();
+      await testInstitutional();
+      log('\n✅ 全部測試完畢', 'ok');
+    }
+
+    function renderTable(data, title) {
+      if (!data || data.length === 0) return;
+      const keys = Object.keys(data[0]);
+      let html = `<h3 style="margin:16px 0 8px;color:#10b981;">${title}</h3><table><thead><tr>`;
+      keys.forEach(k => html += `<th>${k}</th>`);
+      html += '</tr></thead><tbody>';
+      data.forEach(row => {
+        html += '<tr>';
+        keys.forEach(k => html += `<td>${row[k] ?? ''}</td>`);
+        html += '</tr>';
+      });
+      html += '</tbody></table>';
+      document.getElementById('result').innerHTML += html;
+    }
+  </script>
+</body>
+</html>

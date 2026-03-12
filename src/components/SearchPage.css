@@ -1,0 +1,278 @@
+.search-page {
+  min-height: 100vh;
+  background: var(--bg-primary, #0f172a);
+  color: var(--text-primary, #e2e8f0);
+}
+
+.search-header {
+  background: var(--bg-secondary, #1e293b);
+  border-bottom: 1px solid var(--border-color, #334155);
+  padding: 1.5rem 0;
+}
+
+.search-header-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+.search-brand {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.search-logo {
+  font-size: 2.5rem;
+  line-height: 1;
+}
+
+.search-brand h1 {
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--accent-blue, #38bdf8);
+}
+
+.search-brand p {
+  margin: 0.2rem 0 0;
+  font-size: 0.9rem;
+  color: var(--text-secondary, #94a3b8);
+}
+
+.search-body {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+/* 搜尋框 */
+.search-bar-wrap {
+  margin-bottom: 1.25rem;
+}
+
+.search-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.85rem 1.2rem;
+  font-size: 1.1rem;
+  background: var(--bg-secondary, #1e293b);
+  border: 1.5px solid var(--border-color, #334155);
+  border-radius: 10px;
+  color: var(--text-primary, #e2e8f0);
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.search-input:focus {
+  border-color: var(--accent-blue, #38bdf8);
+}
+
+.search-input::placeholder {
+  color: var(--text-muted, #64748b);
+}
+
+/* 產業篩選 */
+.industry-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.ind-btn {
+  padding: 0.3rem 0.75rem;
+  font-size: 0.8rem;
+  background: var(--bg-secondary, #1e293b);
+  border: 1px solid var(--border-color, #334155);
+  border-radius: 20px;
+  color: var(--text-secondary, #94a3b8);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.ind-btn:hover {
+  border-color: var(--accent-blue, #38bdf8);
+  color: var(--accent-blue, #38bdf8);
+}
+
+.ind-btn.active {
+  background: var(--accent-blue, #38bdf8);
+  border-color: var(--accent-blue, #38bdf8);
+  color: #0f172a;
+  font-weight: 600;
+}
+
+/* 狀態訊息 */
+.search-status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 2rem;
+  color: var(--text-secondary, #94a3b8);
+  font-size: 0.95rem;
+}
+
+.search-status.error {
+  color: #f87171;
+}
+
+.spinner {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border: 2.5px solid var(--border-color, #334155);
+  border-top-color: var(--accent-blue, #38bdf8);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* 結果計數 */
+.result-count {
+  font-size: 0.85rem;
+  color: var(--text-secondary, #94a3b8);
+  margin-bottom: 1rem;
+}
+
+/* ── 熱門股票 ── */
+.popular-section {
+  margin-bottom: 1.5rem;
+}
+
+.popular-title {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-muted, #64748b);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 0.85rem;
+}
+
+.popular-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.popular-group {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.popular-group-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  min-width: 72px;
+  padding-top: 0.5rem;
+  flex-shrink: 0;
+}
+
+.popular-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.popular-chip {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.75rem;
+  background: var(--bg-secondary, #1e293b);
+  border: 1px solid var(--border-color, #334155);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.popular-chip:hover {
+  border-color: var(--chip-color, #38bdf8);
+  background: color-mix(in srgb, var(--chip-color, #38bdf8) 10%, #1e293b);
+  transform: translateY(-1px);
+}
+
+.chip-id {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--chip-color, #38bdf8);
+  font-family: monospace;
+}
+
+.chip-name {
+  font-size: 0.82rem;
+  color: var(--text-primary, #e2e8f0);
+}
+
+@media (max-width: 600px) {
+  .popular-group {
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+  .popular-group-label {
+    padding-top: 0;
+  }
+}
+
+/* 股票格 */
+.stock-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
+  gap: 0.75rem;
+}
+
+.stock-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.2rem;
+  padding: 0.85rem 1rem;
+  background: var(--bg-secondary, #1e293b);
+  border: 1px solid var(--border-color, #334155);
+  border-radius: 10px;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s;
+}
+
+.stock-card:hover {
+  border-color: var(--accent-blue, #38bdf8);
+  background: #1b2d44;
+  transform: translateY(-2px);
+}
+
+.stock-card-id {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--accent-blue, #38bdf8);
+  font-family: monospace;
+}
+
+.stock-card-name {
+  font-size: 0.9rem;
+  color: var(--text-primary, #e2e8f0);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.stock-card-ind {
+  font-size: 0.72rem;
+  color: var(--text-muted, #64748b);
+  background: #0f172a;
+  border-radius: 4px;
+  padding: 1px 6px;
+  margin-top: 0.1rem;
+}
+
+@media (max-width: 600px) {
+  .stock-grid {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  }
+}
